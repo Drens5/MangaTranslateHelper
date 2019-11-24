@@ -27,6 +27,7 @@ dependencies:
 - aeson
 - utf8-string
 - unicode-show
+- vector
 
 library:
   source-dirs: src
