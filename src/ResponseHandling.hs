@@ -40,8 +40,10 @@ fullParseParsedText obj = parseParsedResults obj >>= parseParsedText
 
 -- | From a succesful json parse modify the result to be able to print the
 -- result with the newlines that appear in the response.
+-- The reverse is to make the results correspond from top to bottom with the
+-- page.
 showStyleNewlines :: Result [T.Text] -> [T.Text]
-showStyleNewlines (Success (x:_)) = T.lines $ T.filter (/= '\r') x
+showStyleNewlines (Success (x:_)) = reverse $ T.lines $ T.filter (/= '\r') x
 showStyleNewlines (Error s) = [T.pack s]
 
 -- | Uses ushow but adds newlines, and removes the double quotes in the output
