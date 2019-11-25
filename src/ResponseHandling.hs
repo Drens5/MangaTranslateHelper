@@ -1,22 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 module ResponseHandling
     ( writeParsedTextToFile
+    , writeJsonResponseToFile
     ) where
 
-import Control.Monad
-import Control.Monad.IO.Class
 import Data.Aeson
 import Data.Text (Text)
-import GHC.Generics
 import Network.HTTP.Req
 import System.IO
-import Data.ByteString (ByteString)
-import Data.ByteString.UTF8 (fromString)
-import Data.Proxy
-import Data.Monoid ((<>))
 import Text.Show.Unicode
 import qualified Data.Vector as V
 import Data.Aeson.Types
+
+writeJsonResponseToFile :: FilePath -> Value -> IO ()
+writeJsonResponseToFile file response = writeFile file $ ushow response
 
 writeParsedTextToFile :: FilePath -> Value -> IO ()
 writeParsedTextToFile file response = writeFile file $ ushow $
@@ -27,7 +24,7 @@ writeParsedTextToFile file response = writeFile file $ ushow $
 parseText :: Value -> Parser Text
 parseText = withObject "Object within ParsedResults" $ \o -> o .: "ParsedText"
 
--- Get the ParsedResults field (which is array) from the json response.
+-- | Get the ParsedResults field (which is array) from the json response.
 parseParsedResults :: Value -> Parser Value -- Soo arrays have type Value.
 parseParsedResults = withObject "Top Object from response." $ \o -> o .: "ParsedResults"
 

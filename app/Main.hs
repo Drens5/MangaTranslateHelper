@@ -7,6 +7,7 @@ import Text.Show.Unicode
 import ResponseHandling
 
 main :: IO ()
-main = runReq defaultHttpConfig (defaultRequest "https://i.imgur.com/LNSTgqy.png") -- After this we are back in IO monad.
+main = getApiKey >>= (\apiKey -> runReq defaultHttpConfig
+    (urlRequest "https://i.imgur.com/LNSTgqy.png" apiKey)) -- After this we are back in IO monad.
     >>= (\response -> writeParsedTextToFile "files/response.txt"
     (responseBody response :: Value)) -- This works, but if I use responseBody in writeParsedTextToFile this type signature can't be added
