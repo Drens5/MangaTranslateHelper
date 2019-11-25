@@ -28,7 +28,7 @@ urlRequest remoteUrl apiKey = req POST (https "api.ocr.space" /: "parse" /: "ima
         "OCREngine" =: ("1" :: String)
     apikeyHeader = header (fromString "apikey") (fromString apiKey)
 
--- | Parses the apiKey from files/apikey.txt.
+-- | Parses the apiKey from files/apikey.txt. (UNSAFE)
 -- The apiKey has to be the first non-whitespace string in the file.
 getApiKey :: IO ApiKey
 getApiKey = (head . words) <$> readFile "files/apikey.txt"
