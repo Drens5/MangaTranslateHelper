@@ -13,11 +13,12 @@ import qualified Data.Vector as V
 import Data.Aeson.Types
 
 writeJsonResponseToFile :: FilePath -> Value -> IO ()
-writeJsonResponseToFile file response = writeFile file $ ushow response
+writeJsonResponseToFile file response = writeFile ("response/" ++ file) $
+    ushow response
 
 writeParsedTextToFile :: FilePath -> Value -> IO ()
-writeParsedTextToFile file response = writeFile file $ ushowLn $
-    showStyleNewlines $ parse fullParseParsedText response
+writeParsedTextToFile file response = writeFile ("response/" ++ file) $ ushowLn
+    $ showStyleNewlines $ parse fullParseParsedText response
 
 -- | The array it's in is an array of objects and this is afield in that innner
 -- object. Get the parsedText field out of the object.

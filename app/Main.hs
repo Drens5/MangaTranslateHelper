@@ -5,12 +5,35 @@ import Network.HTTP.Req
 import Data.Aeson
 import Text.Show.Unicode
 import ResponseHandling
+import System.IO (FilePath)
 
 main :: IO ()
-main = getApiKey >>= (\apiKey -> runReq defaultHttpConfig
-    (urlRequest "https://i.imgur.com/nh7yhKz.png" apiKey)) -- After this we are back in IO monad.
-    >>= (\response -> writeParsedTextToFile "files/response.txt"
-    (responseBody response :: Value)) -- This works, but if I use responseBody in writeParsedTextToFile this type signature can't be added
+main = multiUrlRequests
 
 -- https://i.imgur.com/nh7yhKz.png
 -- https://i.imgur.com/LNSTgqy.png
+-- "files/response.txt"
+
+-- | Run all the requests specified in configuration/requestdata.txt.
+multiUrlRequests :: IO ()
+multiUrlRequests = loadRequestData >>= mapM_ singleUrlRequestData
+
+-- | Run a single request with remote url.
+singleUrlRequest :: String -> FilePath -> IO ()
+singleUrlRequest url responseFilePath = getApiKey >>= (\apiKey -> runReq
+    defaultHttpConfig (urlRequest url apiKey))
+    >>= (\response -> writeParsedTextToFile responseFilePath
+    (responseBody response :: Value)) -- This works, but if I use responseBody in writeParsedTextToFile this type signature can't be added
+
+-- | Run a single request with remote url using singleUrlRequest.
+singleUrlRequestData :: RemoteImage -> IO ()
+singleUrlRequestData remoteImage = singleUrlRequest (url remoteImage)
+    (savePath remoteImage)
+
+-- | Makes a single url request with remote url but writes the full json response
+-- to "response/response.txt"
+singleUrlRequestRawResponse :: String -> IO ()
+singleUrlRequestRawResponse url = getApiKey >>=
+    (\apiKey -> runReq defaultHttpConfig (urlRequest url apiKey))
+    >>= (\response -> writeJsonResponseToFile "response.txt"
+    (responseBody response :: Value))

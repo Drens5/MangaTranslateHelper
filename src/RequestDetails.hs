@@ -3,6 +3,8 @@
 module RequestDetails
     ( urlRequest
     , getApiKey
+    , loadRequestData
+    , RemoteImage (url, savePath)
     ) where
 
 import Data.Aeson
@@ -13,8 +15,21 @@ import Data.Monoid ((<>))
 
 type ApiKey = String
 
--- A nice update here would be to use the reader monad so that a user only need
--- to specify their API key in an external file.
+data RemoteImage = RemoteImage
+    { savePath :: FilePath -- Will be relative to response folder, see ResponseHandling write functions.
+    , url :: String
+    }
+
+loadRequestData :: IO [RemoteImage]
+loadRequestData = parseRequestData <$> readFile "configuration/requestdata.txt"
+
+-- | String has to be in the following format: have lines in the following form
+-- "savePath" (any amount of whitespace) "remoteUrl".
+parseRequestData :: String -> [RemoteImage]
+parseRequestData requestData = foldr (step . words) [] (lines requestData)
+  where
+    step (path : remoteUrl : _) acc = RemoteImage path remoteUrl : acc
+
 urlRequest :: FromJSON a => String -> ApiKey -> Req (JsonResponse a)
 urlRequest remoteUrl apiKey = req POST (https "api.ocr.space" /: "parse" /: "image")
     (ReqBodyUrlEnc apiParameters) jsonResponse apikeyHeader
@@ -31,4 +46,4 @@ urlRequest remoteUrl apiKey = req POST (https "api.ocr.space" /: "parse" /: "ima
 -- | Parses the apiKey from files/apikey.txt. (UNSAFE)
 -- The apiKey has to be the first non-whitespace string in the file.
 getApiKey :: IO ApiKey
-getApiKey = (head . words) <$> readFile "files/apikey.txt"
+getApiKey = (head . words) <$> readFile "configuration/apikey.txt"
