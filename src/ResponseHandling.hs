@@ -44,8 +44,9 @@ showStyleNewlines :: Result [T.Text] -> [T.Text]
 showStyleNewlines (Success (x:_)) = T.lines $ T.filter (/= '\r') x
 showStyleNewlines (Error s) = [T.pack s]
 
--- | Uses ushow but adds newlines.
+-- | Uses ushow but adds newlines, and removes the double quotes in the output
+-- string as a result of ushow.
 ushowLn :: [T.Text] -> String
-ushowLn xs = dropWhile (== '\n') $ foldr step "" xs
+ushowLn xs = filter (/= '\"') $ dropWhile (== '\n') $ foldr step "" xs
   where
     step text soFar = soFar ++ ('\n' : ushow text)
