@@ -6,6 +6,7 @@ import Data.Aeson
 import Text.Show.Unicode
 import ResponseHandling
 import System.IO (FilePath)
+import Kanji.Dictionary
 
 main :: IO ()
 main = multiUrlRequests

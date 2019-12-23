@@ -4,9 +4,12 @@ Put your apikey in configuration/apikey.txt, like the example with dummy apikey 
 Specify in configuration/requestdata.txt the remote urls to read the pictures from and the
 names (filepaths) under which you want their results to be saved, like the example provided
 (that is on each line: first the name (filepath), then whitespace, then the url).
-Remark: the paths are relative to the response folder, so after
+
+**Remark**: the paths are relative to the response folder, so after
 running a request your results will be in that folder.
-Remark 2: the name (filepath) may not contain whitespaces.
+
+**Remark 2**: the name (filepath) may not contain whitespaces.
+
 
 Move to the MangaTranslateHelper directory.
 
